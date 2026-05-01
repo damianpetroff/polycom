@@ -160,8 +160,8 @@ rustup show
 rustup update
 ```
 
-### 🤝 Contributing
-- Use feature branches
-- Ensure `cargo fmt` passes
-- Ensure `cargo clippy` passes
-- Ensure tests pass before PR
+## 🤝 Contributing
+- [ ] Use feature branches
+- [ ] Ensure `cargo fmt` passes
+- [ ] Ensure `cargo clippy` passes
+- [ ] Ensure tests pass before PR
