@@ -18,24 +18,24 @@ impl Drop for AltScreen {
 
 // Import project modules
 mod audio;
-mod network;
 mod codec;
+mod network;
 
 // Import required crates and types
-use crossbeam::channel;
-use std::thread;
-use std::net::SocketAddr;
 use codec::OpusCodec;
+use crossbeam::channel;
+use std::net::SocketAddr;
+use std::thread;
 
 /// Entry point for the Polycom audio chat application
 fn main() {
     // Enter alternate screen buffer for fullscreen UI
-    let _altscreen = AltScreen; AltScreen::enter();
+    let _altscreen = AltScreen;
+    AltScreen::enter();
     // Prompt user for a nickname (not used further in this code, but could be used for identification)
     println!("Enter your nickname:");
     let mut nickname = String::new();
     std::io::stdin().read_line(&mut nickname).unwrap();
-
 
     // No need to prompt for peer IP; we will broadcast to everyone on the same port
 
@@ -90,8 +90,8 @@ fn main() {
     thread::spawn(move || {
         let mut codec = OpusCodec::new();
         use std::collections::HashMap;
-        use std::time::{Duration, Instant};
         use std::io::{self, Write};
+        use std::time::{Duration, Instant};
         let mut known_nicks: HashMap<String, (SocketAddr, Instant)> = HashMap::new();
         let mut my_addr = None;
 
@@ -116,7 +116,9 @@ fn main() {
         loop {
             // Remove nicks not seen in the last 5 seconds
             let now = Instant::now();
-            known_nicks.retain(|_, &mut (_, last_seen)| now.duration_since(last_seen) < Duration::from_secs(5));
+            known_nicks.retain(|_, &mut (_, last_seen)| {
+                now.duration_since(last_seen) < Duration::from_secs(5)
+            });
 
             // Non-blocking receive with short timeout to allow periodic GUI refresh
             let packet_opt = match network_rx.recv_timeout(Duration::from_millis(200)) {
@@ -141,10 +143,14 @@ fn main() {
                     }
                 }
                 // Extract nickname from packet
-                if packet.is_empty() { continue; }
+                if packet.is_empty() {
+                    continue;
+                }
                 let nick_len = packet[0] as usize;
-                if packet.len() < 1 + nick_len { continue; }
-                let nick = match std::str::from_utf8(&packet[1..1+nick_len]) {
+                if packet.len() < 1 + nick_len {
+                    continue;
+                }
+                let nick = match std::str::from_utf8(&packet[1..1 + nick_len]) {
                     Ok(n) => n,
                     Err(_) => continue,
                 };
@@ -156,7 +162,7 @@ fn main() {
                     redraw_gui(&known_nicks);
                 }
                 // Decode and play audio
-                let opus_data = &packet[1+nick_len..];
+                let opus_data = &packet[1 + nick_len..];
                 let decoded = codec.decode(opus_data);
                 play_tx.send(decoded).ok();
             }

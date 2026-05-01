@@ -1,18 +1,14 @@
-
 // Import required types for UDP networking and threading
-use std::net::{UdpSocket, SocketAddr};
+use crossbeam::channel::{Receiver, Sender};
+use std::net::{SocketAddr, UdpSocket};
 use std::thread;
-use crossbeam::channel::{Sender, Receiver};
 
 /// Starts the network layer for sending and receiving audio packets over UDP broadcast.
 ///
 /// # Arguments
 /// * `tx_audio` - Sender for received audio packets (from network to app)
 /// * `rx_audio` - Receiver for outgoing audio packets (from app to network)
-pub fn start_network(
-    tx_audio: Sender<(Vec<u8>, SocketAddr)>,
-    rx_audio: Receiver<Vec<u8>>,
-) {
+pub fn start_network(tx_audio: Sender<(Vec<u8>, SocketAddr)>, rx_audio: Receiver<Vec<u8>>) {
     use std::net::Ipv4Addr;
     // Bind a UDP socket to all interfaces on port 5000
     let socket = UdpSocket::bind("0.0.0.0:5000").expect("bind failed");

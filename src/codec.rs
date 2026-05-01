@@ -1,6 +1,5 @@
-
 // Import Opus encoder/decoder types and configuration enums
-use opus::{Encoder, Decoder, Application, Channels};
+use opus::{Application, Channels, Decoder, Encoder};
 
 /// Struct to encapsulate Opus audio codec functionality (encoding and decoding)
 pub struct OpusCodec {
