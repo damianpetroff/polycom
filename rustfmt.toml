@@ -1,2 +1,4 @@
 edition = "2021"
 max_width = 100
+hard_tabs = false
+newline_style = "Auto"
