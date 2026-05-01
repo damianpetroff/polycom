@@ -129,18 +129,17 @@ fn main() {
 
             if let Some((packet, src_addr)) = packet_opt {
                 // On first packet, determine our own address (to avoid echo)
-                if my_addr.is_none() {
-                    if let Ok(sock) = std::net::UdpSocket::bind("0.0.0.0:0") {
-                        if let Ok(local_addr) = sock.local_addr() {
-                            my_addr = Some(local_addr);
-                        }
-                    }
+                if my_addr.is_none()
+                    && let Ok(sock) = std::net::UdpSocket::bind("0.0.0.0:0")
+                    && let Ok(local_addr) = sock.local_addr()
+                {
+                    my_addr = Some(local_addr);
                 }
                 // Ignore our own packets (optional, may not always work with NAT)
-                if let Some(my_addr) = my_addr {
-                    if src_addr == my_addr {
-                        continue;
-                    }
+                if let Some(my_addr) = my_addr
+                    && src_addr == my_addr
+                {
+                    continue;
                 }
                 // Extract nickname from packet
                 if packet.is_empty() {
